@@ -9,13 +9,20 @@
 
 #include <Arduino.h>
 
+
 volatile bool buzzerHigh = false;
 volatile bool buzzerEnabled = false;
 
 void setup() {
   //Serial.begin(115200);
   NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
-  NRF_P0->DIRCLR = (1UL << 3);
+   NRF_P0->PIN_CNF[3] =
+      (0UL << 0) |    // DIR: input
+      (0UL << 1) |    // INPUT: connect
+      (3UL << 2) |    // PULL: pullup
+      (0UL << 8) |    // DRIVE: standard
+      (0UL << 16);    // SENSE: disabled
+  //NRF_P0->DIRCLR = (1UL << 3);
   //setTimer1Freq();
 }
 
@@ -42,7 +49,7 @@ void loop() {
 
 
 void setBuzzerFreq() {
-  bool buttonPressed = (NRF_P0->IN & (1UL << 3)); 
+  bool buttonPressed = !(NRF_P0->IN & (1UL << 3)); 
   if (buttonPressed && !buzzerEnabled){
     NRF_TIMER1->TASKS_STOP = 1;
     NRF_TIMER1->TASKS_CLEAR = 1;
@@ -58,6 +65,8 @@ void setBuzzerFreq() {
   }
   if (!buttonPressed && buzzerEnabled) {
     NRF_TIMER1->TASKS_STOP = 1;
+    NRF_TIMER1->INTENCLR = (1UL << 16);
+    NRF_TIMER1->EVENTS_COMPARE[0] = 0;
     NRF_P0->OUTCLR = (1UL << 29);
     buzzerHigh = false;
     buzzerEnabled = false;
