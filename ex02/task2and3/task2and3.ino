@@ -9,7 +9,7 @@
 
 #include <Arduino.h>
 
-bool buzzerHigh = false;
+volatile bool buzzerHigh = false;
 
 void setup() {
   NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
@@ -22,7 +22,7 @@ void loop() {
 }
 
 
-/*
+
 void setTimer1Freq() {
   NRF_TIMER1->TASKS_STOP = 1;
   NRF_TIMER1->TASKS_CLEAR = 1;
@@ -35,7 +35,7 @@ void setTimer1Freq() {
   NVIC_EnableIRQ(TIMER1_IRQn);
   NRF_TIMER1->TASKS_START = 1;
 }
-*/
+
 
 
 void setBuzzerFreq() {
@@ -46,15 +46,16 @@ void setBuzzerFreq() {
 extern "C" void TIMER1_IRQHandler() {
   if (NRF_TIMER1->EVENTS_COMPARE[0]){
     NRF_TIMER1->EVENTS_COMPARE[0] = 0;
-  }
-  if (buzzerHigh){
+    if (buzzerHigh){
     NRF_P0->OUTCLR = (1UL << 29);
       buzzerHigh = false;
   }
-  else {
-    NRF_P0->OUTSET = (1UL << 29);
-    buzzerHigh = true;
+   else {
+      NRF_P0->OUTSET = (1UL << 29);
+      buzzerHigh = true;
+    }
   }
+  
 }
 
 
