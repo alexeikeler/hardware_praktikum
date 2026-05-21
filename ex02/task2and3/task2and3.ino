@@ -44,7 +44,17 @@ void setBuzzerFreq() {
 
 
 extern "C" void TIMER1_IRQHandler() {
-
+  if (NRF_TIMER1->EVENTS_COMPARE[0]){
+    NRF_TIMER1->EVENTS_COMPARE[0] = 0;
+  }
+  if (buzzerHigh){
+    NRF_P0->OUTCLR = (1UL << 29);
+      buzzerHigh = false;
+  }
+  else {
+    NRF_P0->OUTSET = (1UL << 29);
+    buzzerHigh = true;
+  }
 }
 
 
