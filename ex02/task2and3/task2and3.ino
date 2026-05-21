@@ -12,6 +12,7 @@
 volatile bool buzzerHigh = false;
 
 void setup() {
+  //Serial.begin(115200);
   NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
   setTimer1Freq();
 }
@@ -27,7 +28,7 @@ void setTimer1Freq() {
   NRF_TIMER1->TASKS_STOP = 1;
   NRF_TIMER1->TASKS_CLEAR = 1;
   NRF_TIMER1->MODE = 0;
-  NRF_TIMER1->BITMODE = 0;
+  NRF_TIMER1->BITMODE = 3;
   NRF_TIMER1->PRESCALER = 4;
   NRF_TIMER1->CC[0] = 478;
   NRF_TIMER1->SHORTS = (1UL << 0);
