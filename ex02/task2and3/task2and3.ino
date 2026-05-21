@@ -1,3 +1,4 @@
+
 // ------------------------------------------------------------
 //  Task 2 and 3:
 //      Write the body of setTimer1Freq() as specified in the exercise sheet.
@@ -8,8 +9,10 @@
 
 #include <Arduino.h>
 
+bool buzzerHigh = false;
 
 void setup() {
+  NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
   setTimer1Freq();
 }
 
@@ -19,13 +22,20 @@ void loop() {
 }
 
 
-
+/*
 void setTimer1Freq() {
-  NRF_TIMER1->MODE = TIMER_MODE_MODE_Timer;
-  NRF_TIMER1->BITMODE = TIMER_BITMODE_BITMODE_32bit;
-  NRF_TIMER->PRESCALER;
+  NRF_TIMER1->TASKS_STOP = 1;
+  NRF_TIMER1->TASKS_CLEAR = 1;
+  NRF_TIMER1->MODE = 0;
+  NRF_TIMER1->BITMODE = 0;
+  NRF_TIMER1->PRESCALER = 4;
+  NRF_TIMER1->CC[0] = 478;
+  NRF_TIMER1->SHORTS = (1UL << 0);
+  NRF_TIMER1->INTENSET = (1UL << 16);
+  NVIC_EnableIRQ(TIMER1_IRQn);
+  NRF_TIMER1->TASKS_START = 1;
 }
-
+*/
 
 
 void setBuzzerFreq() {
