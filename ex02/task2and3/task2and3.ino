@@ -16,12 +16,13 @@ volatile bool buzzerEnabled = false;
 void setup() {
   //Serial.begin(115200);
   NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
-   NRF_P0->PIN_CNF[3] =
+  pinMode(3, INPUT_PULLUP);
+  /*  NRF_P0->PIN_CNF[3] =
       (0UL << 0) |    // DIR: input
       (0UL << 1) |    // INPUT: connect
       (3UL << 2) |    // PULL: pullup
       (0UL << 8) |    // DRIVE: standard
-      (0UL << 16);    // SENSE: disabled
+      (0UL << 16);    // SENSE: disabled */
   //NRF_P0->DIRCLR = (1UL << 3);
   //setTimer1Freq();
 }
