@@ -7,7 +7,6 @@
 
 #include <Arduino.h>
 volatile bool buzzerHigh = false;
-volatile bool buzzerEnabled = false;
 
 void setup() {
   NRF_P0->DIRSET = (1UL << 29); // Set P0.29 as output
@@ -43,7 +42,6 @@ void setBuzzerFreq(uint32_t freq) {
     NRF_TIMER1->TASKS_STOP = 1;
     NRF_P0->OUTCLR = (1UL << 29);
     buzzerHigh = false;
-    buzzerEnabled = false;
     return;
   }
   NRF_TIMER1->CC[0] = 1000000/(2 * freq);
