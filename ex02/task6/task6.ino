@@ -23,27 +23,31 @@ void setup() {
 
 
 void loop() {
-
+// music change by interrupt so no loop needed
 }
 
 
 void playMelody() {
   setTimer2(true);
-  setBuzzerFreq(notes[0]);
+  setBuzzerFreq(notes[0]); // start with first note
 
 }
 
 extern "C" void TIMER2_IRQHandler() {
   if (NRF_TIMER2->EVENTS_COMPARE[0]){
-    NRF_TIMER2->EVENTS_COMPARE[0] = 0;
+    NRF_TIMER2->EVENTS_COMPARE[0] = 0; // clear event flag
+
     tCount++;
+    // change note after the duration for current note is up
     if(tCount >= durations[melodyIdx]){
-      tCount = 0;
+      tCount = 0; // reset for next note
       melodyIdx++;
+      // stop playing music after last note
       if(melodyIdx >= 10){
         setTimer2(false);
         setBuzzerFreq(0); // out of range, silences buzzer
       }
+      // play next note
       else{
         setBuzzerFreq(notes[melodyIdx]);
       }
@@ -82,6 +86,7 @@ void setBuzzerFreq(uint32_t freq) {
 
   NRF_TIMER1->TASKS_CLEAR = 1;
 
+// moved from setup in previous task to inside the function
   NRF_TIMER1->MODE = 0;
   NRF_TIMER1->BITMODE = 3;
   NRF_TIMER1->PRESCALER = 4;

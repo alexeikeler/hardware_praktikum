@@ -9,6 +9,7 @@
 #include <Adafruit_TinyUSB.h>
 #include <Arduino.h>
 volatile uint32_t tCount = 0;
+// helper to be able to print after a set interval
 uint32_t printcount = 0;
 
 void setup() {
@@ -20,6 +21,7 @@ void setup() {
 
 
 void loop() {
+  // tcount/ printcount ar in ms -> print every second
   if(tCount -printcount >= 1000){
     printcount= tCount;
     Serial.println(tCount);
@@ -29,13 +31,14 @@ void loop() {
 
 extern "C" void TIMER2_IRQHandler() {
   if (NRF_TIMER2->EVENTS_COMPARE[0]){
-    NRF_TIMER2->EVENTS_COMPARE[0] = 0;
+    NRF_TIMER2->EVENTS_COMPARE[0] = 0; // clear event flag
     tCount++;
   }
 }
 
 
 void setTimer2(bool enable) {
+  // if timer enabled start it, setup lieke timer 1 in previous tasks
   if(enable){
   NRF_TIMER2->TASKS_STOP = 1;
   NRF_TIMER2->TASKS_CLEAR = 1;
@@ -48,6 +51,7 @@ void setTimer2(bool enable) {
   NVIC_EnableIRQ(TIMER2_IRQn);
   NRF_TIMER2->TASKS_START = 1;
   }
+  // disable timer
   else{
     NRF_TIMER2->TASKS_STOP = 1;
     NVIC_DisableIRQ(TIMER2_IRQn);

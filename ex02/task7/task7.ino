@@ -18,6 +18,7 @@ volatile uint32_t tCount = 0;
 uint16_t standardDuration = 4;
 uint16_t standardOctave = 6;
 uint16_t standardBPM = 63;
+bool raiseOctave = false;
 
 
 void setup() {
@@ -54,11 +55,35 @@ bool parseRTTLNote(Note * note) {
 
 uint16_t freqFromNote(char note, bool sharp) {
 
+  uint16_t provisionalNote;
+
+
+  // length of notes/ notenames is 12
+  for (int i = 0; i < 12; i++){
+    if( noteNames[i] == note){
+
+      // raise by semitone
+      if(sharp){
+        if (i < 11){
+          return notes[i+1];
+        }
+        else{
+          raiseOcatve = true;
+          return notes[0];
+        }
+      }
+
+      return notes[i];
+    }
+  }
+  // if we dont know the note; 0 is outside of the range for setBuzzzer freq
+  return 0;
 }
 
 
 uint16_t str2uint(char * buf, uint16_t * idx) {
-
+  uint16_t val = 0;
+  while(char isDigit)
 }
 
 
@@ -66,7 +91,7 @@ bool isDigit(char c) {
   return c >= 0 && c<= 9;
 }
 
-// from here code from Task 6
+// from here on is the code from Task 6
 void setBuzzerFreq(uint32_t freq) {
   if (freq < 100 || freq > 3000){
     NRF_TIMER1->TASKS_STOP = 1;
