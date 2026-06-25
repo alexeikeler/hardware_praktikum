@@ -132,6 +132,9 @@ String detectGestureWindow() {
 // =====================
 String detectDynamicGesture(float gyrX, float gyrY, float gyrZ) {
   float thres = 100;
+  if( abs(gyrX) < thres*1.5  && abs(gyrY) < thres && abs(gyrZ)< thres){
+    return "NONE";
+  }
   if(abs(gyrX) > abs(gyrY) && abs(gyrX) > abs(gyrZ)){
     if (gyrX >=  0){
       return "TILT_RIGHT";
@@ -146,9 +149,9 @@ String detectDynamicGesture(float gyrX, float gyrY, float gyrZ) {
   }
   if(abs(gyrZ) > abs(gyrY) && abs(gyrZ) > abs(gyrX)){
     if (gyrX >=  0){
-      return "MOVE_RIGT";
+      return "MOVE_LEFT";
     }
-    return "MOVE_LEFT";
+    return "MOVE_RIGHT";
   }
   // TODO: Detect 6 gestures using gyroscope
   // Gestures: TILT_LEFT, TILT_RIGHT, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT
