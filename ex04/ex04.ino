@@ -41,7 +41,9 @@ bool buffer_full = false;
 // =====================
 // TODO: Create variables to store last detected gestures
 // - lastDetectedGesture: from accelerometer FSM
+String lastDetectedGesture = "NONE";
 // - lastDynamicGesture: from gyroscope
+String lastDynamicGesture = "NONE";
 
 
 
@@ -61,7 +63,7 @@ String detectOrientation(float ax, float ay, float az) {
 
   // Detect device orientation from accelerometer
   // Use thresholds on ay and az axes
-  float threshold = 8.0;
+  float threshold = 8.5;
   if ((abs(az) >= abs(ay)) && abs(az) >= threshold){
     if (az > 0) {
       return "FACE UP";
@@ -88,10 +90,38 @@ String detectOrientation(float ax, float ay, float az) {
 // =====================
 // Part C: Accelerometer-based Gesture Detection
 // =====================
+
+// since the buffer window is very short you need to turn the sensor really fast to get a good measurement
 String detectGestureWindow() {
 
-  // TODO: Detect SUPINATION/PRONATION from Z-axis acceleration buffer
+  // Detect SUPINATION/PRONATION from Z-axis acceleration buffer
   // Analyze min/max range and motion direction
+
+  if(!buffer_full){
+      return "NONE";
+  }
+
+  float maxaz = az_buffer[0];
+  float minaz = az_buffer[0];
+
+// find min and max
+  for(int x = 1; x < WINDOW_SIZE; x++){
+    if (az_buffer[x] < minaz){
+      minaz = az_buffer[x];
+    }
+    if (az_buffer[x] > maxaz){
+      maxaz = az_buffer[x];
+    }
+  }
+  // compare last and first elt of buffer to determine direction
+  // difference of min and max for motion detection
+  float thres = 16.0;
+  if (maxaz - minaz >= thres && az_buffer[0] > az_buffer[WINDOW_SIZE -1]){
+    return "Pronation";
+  }
+  if(maxaz - minaz >= thres && az_buffer[0] <= az_buffer[WINDOW_SIZE- 1]){
+    return "Subpination";
+  }
 
   return "NONE";
 }
@@ -192,8 +222,10 @@ void loop() {
     // =====================
     // TODO: Call detectGestureWindow() or detectGestureFSM()
     // TODO: If gesture detected (not "NONE"), store in lastDetectedGesture
-    String detectedGesture = "NONE";  // TODO: Replace with actual detection
-
+    String detectedGesture = detectGestureWindow() ;  // TODO: Replace with actual detection
+    if(detectedGesture != "NONE"){
+      lastDetectedGesture = detectedGesture;
+    }
     // =====================
     // Part D: Gyroscope-based Dynamic Gesture Detection
     // =====================
@@ -204,22 +236,23 @@ void loop() {
     // =====================
     // Serial Output (USB)
     // =====================
-    Serial.print("ax: "); Serial.print(ax);
-    Serial.print(" | ay: "); Serial.print(ay);
-    Serial.print(" | az: "); Serial.print(az);
+/*     Serial.println("ax: "); Serial.print(ax);
+    Serial.println(" | ay: "); Serial.print(ay);
+    Serial.println(" | az: "); Serial.print(az);
 
-    Serial.print(" | gyrX: "); Serial.print(gyrX);
-    Serial.print(" | gyrY: "); Serial.print(gyrY);
-    Serial.print(" | gyrZ: "); Serial.print(gyrZ);
+    Serial.println(" | gyrX: "); Serial.print(gyrX);
+    Serial.println(" | gyrY: "); Serial.print(gyrY);
+    Serial.println(" | gyrZ: "); Serial.print(gyrZ); */
 
-    Serial.print(" | Orientation: ");
-    Serial.print(orientation);
+    Serial.println(" | az: "); Serial.print(az);
+    Serial.println(" | Orientation: ");
+    Serial.println(orientation);
 
-    Serial.print(" | Accelerometer Gesture: ");
-    Serial.print(lastDetectedGesture);
+    Serial.println(" | Accelerometer Gesture: ");
+    Serial.println(lastDetectedGesture);
 
-    Serial.print(" | Gyro Gesture: ");
-    Serial.println(lastDynamicGesture);
+    Serial.println(" | Gyro Gesture: ");
+    //Serial.println(lastDynamicGesture);
   
 
     // =====================
