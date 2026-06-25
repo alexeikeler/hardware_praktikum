@@ -132,7 +132,24 @@ String detectGestureWindow() {
 // =====================
 String detectDynamicGesture(float gyrX, float gyrY, float gyrZ) {
   float thres = 100;
-  if(gyrX > gyrY && gyrX > gyrZ)
+  if(abs(gyrX) > abs(gyrY) && abs(gyrX) > abs(gyrZ)){
+    if (gyrX >=  0){
+      return "TILT_RIGHT";
+    }
+    return "TILT_LEFT";
+  }
+  if(abs(gyrY) > abs(gyrX) && abs(gyrY) > abs(gyrZ)){
+    if (gyrX >=  0){
+      return "MOVE_DOWN";
+    }
+    return "MOVE_UP";
+  }
+  if(abs(gyrZ) > abs(gyrY) && abs(gyrZ) > abs(gyrX)){
+    if (gyrX >=  0){
+      return "MOVE_RIGT";
+    }
+    return "MOVE_LEFT";
+  }
   // TODO: Detect 6 gestures using gyroscope
   // Gestures: TILT_LEFT, TILT_RIGHT, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT
   // Return strongest gesture (highest magnitude)
@@ -232,7 +249,10 @@ void loop() {
     // =====================
     // TODO: Call detectDynamicGesture()
     // TODO: If gesture detected (not "NONE"), store in lastDynamicGesture
-    String dynamicGesture = "NONE";  // TODO: Replace with actual detection
+    String dynamicGesture = detectDynamicGesture(gyrX, gyrY,gyrZ); 
+    if(dynamicGesture != "NONE"){
+      lastDynamicGesture = dynamicGesture;
+    }
 
     // =====================
     // Serial Output (USB)
@@ -253,7 +273,7 @@ void loop() {
     Serial.println(lastDetectedGesture);
 
     Serial.println(" | Gyro Gesture: ");
-    //Serial.println(lastDynamicGesture);
+    Serial.println(lastDynamicGesture);
   
 
     // =====================
