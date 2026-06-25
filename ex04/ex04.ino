@@ -131,7 +131,8 @@ String detectGestureWindow() {
 // Part D: Gyroscope-based Dynamic Gesture Detection
 // =====================
 String detectDynamicGesture(float gyrX, float gyrY, float gyrZ) {
-
+  float thres = 100;
+  if(gyrX > gyrY && gyrX > gyrZ)
   // TODO: Detect 6 gestures using gyroscope
   // Gestures: TILT_LEFT, TILT_RIGHT, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT
   // Return strongest gesture (highest magnitude)
@@ -220,9 +221,9 @@ void loop() {
     // =====================
     // Part C: Accelerometer-based Gesture Detection
     // =====================
-    // TODO: Call detectGestureWindow() or detectGestureFSM()
-    // TODO: If gesture detected (not "NONE"), store in lastDetectedGesture
-    String detectedGesture = detectGestureWindow() ;  // TODO: Replace with actual detection
+    // Call detectGestureWindow()
+    String detectedGesture = detectGestureWindow() ;  
+    // If gesture detected (not "NONE"), store in lastDetectedGesture
     if(detectedGesture != "NONE"){
       lastDetectedGesture = detectedGesture;
     }
@@ -236,13 +237,13 @@ void loop() {
     // =====================
     // Serial Output (USB)
     // =====================
-/*     Serial.println("ax: "); Serial.print(ax);
+    Serial.println("ax: "); Serial.print(ax);
     Serial.println(" | ay: "); Serial.print(ay);
     Serial.println(" | az: "); Serial.print(az);
 
     Serial.println(" | gyrX: "); Serial.print(gyrX);
     Serial.println(" | gyrY: "); Serial.print(gyrY);
-    Serial.println(" | gyrZ: "); Serial.print(gyrZ); */
+    Serial.println(" | gyrZ: "); Serial.print(gyrZ);
 
     Serial.println(" | az: "); Serial.print(az);
     Serial.println(" | Orientation: ");
